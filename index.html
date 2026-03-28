@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="FeeManager"/>
+<title>School Fee Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#1a3c6e;--blue:#2563eb;--blue-l:#eff6ff;--green:#16a34a;--green-l:#f0fdf4;--red:#dc2626;--red-l:#fef2f2;--amber:#d97706;--amber-l:#fffbeb;--purple:#7c3aed;--purple-l:#f5f3ff;--g50:#f8fafc;--g100:#f1f5f9;--g200:#e2e8f0;--g400:#94a3b8;--g500:#64748b;--g600:#475569;--g700:#334155;--g800:#1e293b;--r:8px;--rl:12px;--font:'DM Sans',sans-serif}
+body{font-family:var(--font);background:var(--g50);color:var(--g800);font-size:14px;-webkit-font-smoothing:antialiased}
+.hidden{display:none!important}
+.auth-wrap{min-height:100vh;background:linear-gradient(135deg,#1a3c6e,#2563eb);display:flex;align-items:center;justify-content:center;padding:16px}
+.auth-box{background:#fff;border-radius:16px;padding:32px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.auth-logo{text-align:center;margin-bottom:24px}
+.auth-logo-icon{font-size:40px;margin-bottom:8px}
+.auth-logo-title{font-size:20px;font-weight:700;color:var(--navy)}
+.auth-logo-sub{font-size:13px;color:var(--g400);margin-top:4px}
+.auth-tabs{display:flex;background:var(--g100);border-radius:8px;padding:4px;margin-bottom:20px;gap:4px}
+.auth-tab{flex:1;padding:7px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;background:transparent;color:var(--g500);font-family:var(--font);transition:all .15s}
+.auth-tab.active{background:#fff;color:var(--g800);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;min-width:220px;background:#fff;border-right:1px solid var(--g200);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;transition:transform .25s;overflow-y:auto}
+.sidebar-logo{padding:16px 16px 14px;border-bottom:1px solid var(--g100)}
+.sidebar-logo-title{font-size:15px;font-weight:700;color:var(--navy)}
+.sidebar-logo-sub{font-size:11px;color:var(--g400);margin-top:2px}
+.sidebar-nav{flex:1;padding:8px 0}
+.nav-section{font-size:10px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;padding:10px 16px 4px}
+.nav-btn{display:flex;align-items:center;gap:10px;width:100%;padding:9px 16px;font-size:13px;border:none;background:none;cursor:pointer;text-align:left;border-left:3px solid transparent;color:var(--g600);font-family:var(--font);transition:all .15s}
+.nav-btn:hover{background:var(--g50)}
+.nav-btn.active{border-left-color:var(--blue);color:var(--blue);font-weight:600;background:var(--blue-l)}
+.nav-icon{font-size:14px;width:18px;text-align:center}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--g100)}
+.sidebar-user{font-size:12px;color:var(--g400);margin-bottom:8px}
+.main-wrap{flex:1;margin-left:220px;display:flex;flex-direction:column;min-height:100vh}
+.topbar{display:flex;align-items:center;padding:10px 24px;background:#fff;border-bottom:1px solid var(--g100);position:sticky;top:0;z-index:50;gap:10px}
+.menu-btn{display:none;border:none;background:none;cursor:pointer;font-size:20px;padding:4px}
+.main{flex:1;padding:24px;max-width:1100px;width:100%;margin:0 auto}
+.page{display:none}.page.active{display:block}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r);font-size:13px;font-weight:500;border:none;cursor:pointer;font-family:var(--font);transition:all .15s}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:#1d4ed8}
+.btn-success{background:var(--green);color:#fff}.btn-success:hover{background:#15803d}
+.btn-ghost{background:transparent;color:var(--g600);border:1px solid var(--g200)}.btn-ghost:hover{background:var(--g100)}
+.btn-danger{background:var(--red);color:#fff}.btn-sm{padding:5px 10px;font-size:12px}
+.btn-purple{background:var(--purple);color:#fff}.btn-purple:hover{background:#6d28d9}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-green{background:var(--green-l);color:#15803d}.badge-red{background:var(--red-l);color:var(--red)}
+.badge-amber{background:var(--amber-l);color:var(--amber)}.badge-blue{background:var(--blue-l);color:var(--blue)}
+.badge-purple{background:var(--purple-l);color:var(--purple)}
+.card{background:#fff;border-radius:var(--rl);border:1px solid var(--g200);padding:20px;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:600;color:var(--g800);margin-bottom:14px}
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.form-label{font-size:12px;font-weight:500;color:var(--g500)}
+.form-input{padding:9px 12px;border:1px solid var(--g200);border-radius:var(--r);font-size:13px;color:var(--g800);background:#fff;width:100%;font-family:var(--font)}
+.form-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.span2{grid-column:1/-1}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 12px;font-size:11px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--g100);background:var(--g50)}
+td{padding:10px 12px;border-bottom:1px solid var(--g50);color:var(--g700);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--g50)}
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
+.modal{background:#fff;border-radius:var(--rl);padding:24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-title{font-size:16px;font-weight:600;color:var(--g800);margin-bottom:16px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--g100)}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:#fff;border-radius:var(--rl);border:1px solid var(--g200);padding:16px;border-left:4px solid}
+.stat-label{font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.stat-val{font-size:20px;font-weight:700}
+.stat-sub{font-size:11px;color:var(--g400);margin-top:3px}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--g800);color:#fff;padding:12px 18px;border-radius:var(--r);font-size:13px;z-index:2000;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.error-box{background:var(--red-l);color:var(--red);padding:10px 12px;border-radius:var(--r);font-size:13px;margin-bottom:14px}
+.info-box{background:var(--amber-l);color:var(--amber);padding:10px 14px;border-radius:var(--r);font-size:13px;margin-bottom:14px}
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.page-title{font-size:20px;font-weight:700;color:var(--navy)}
+.page-sub{font-size:13px;color:var(--g400);margin-top:2px}
+.overflow-x{overflow-x:auto}
+.wa-preview{background:#dcf8c6;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7;color:#1a3c1a;white-space:pre-wrap;max-height:260px;overflow-y:auto;font-family:monospace}
+.filter-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.bs-month{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.bs-card{background:#fff;border:1px solid var(--g200);border-radius:var(--rl);padding:16px}
+.bs-card-month{font-size:13px;font-weight:600;color:var(--g800);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--g100)}
+.bs-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;color:var(--g600)}
+.bs-row.total{font-weight:600;font-size:13px;color:var(--g800);border-top:1px solid var(--g200);margin-top:6px;padding-top:6px}
+.bs-row.positive{color:var(--green)}.bs-row.negative{color:var(--red)}
+.overlay-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99}
+.exp-type-toggle{display:flex;gap:8px;margin-bottom:12px}
+.type-btn{flex:1;padding:8px;border:1px solid var(--g200);border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);background:#fff;color:var(--g600);transition:all .15s;text-align:center}
+.type-btn.expense.active{background:var(--red-l);border-color:var(--red);color:var(--red)}
+.type-btn.income.active{background:var(--green-l);border-color:var(--green);color:var(--green)}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-220px)}.sidebar.open{transform:translateX(0)}
+  .main-wrap{margin-left:0}.menu-btn{display:block}
+  .hide-mobile{display:none!important}.form-grid{grid-template-columns:1fr}.span2{grid-column:auto}
+}
+</style>
+</head>
+<body>
+
+<div id="auth-screen" class="auth-wrap">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">🏫</div>
+      <div class="auth-logo-title">School Fee Manager</div>
+      <div class="auth-logo-sub">Manage fees, expenses & WhatsApp reminders</div>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">Create Account</button>
+    </div>
+    <div id="auth-error" class="error-box hidden"></div>
+    <div id="register-fields" class="hidden">
+      <div class="form-group"><label class="form-label">School Name</label><input class="form-input" id="reg-school" placeholder="e.g. Sahaj Public School Nagaur"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Username</label><input class="form-input" id="auth-user" placeholder="e.g. sahajschool"/></div>
+    <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" id="auth-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doAuth()"/></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px" onclick="doAuth()" id="auth-btn" data-mode="login">Sign In</button>
+  </div>
+</div>
+
+<div id="app-screen" class="app hidden">
+  <div class="overlay-bg hidden" id="sidebar-overlay" onclick="closeSidebar()"></div>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-title">SchoolFeeManager</div>
+      <div class="sidebar-logo-sub" id="school-name-display">My School</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Fee Management</div>
+      <button class="nav-btn active" data-page="dashboard" onclick="navigate('dashboard')"><span class="nav-icon">⊞</span>Dashboard</button>
+      <button class="nav-btn" data-page="students" onclick="navigate('students')"><span class="nav-icon">◎</span>Students</button>
+      <button class="nav-btn" data-page="fees" onclick="navigate('fees')"><span class="nav-icon">₹</span>Fee Records</button>
+      <button class="nav-btn" data-page="whatsapp" onclick="navigate('whatsapp')"><span class="nav-icon">✉</span>WhatsApp</button>
+      <div class="nav-section">Accounts</div>
+      <button class="nav-btn" data-page="cashbook" onclick="navigate('cashbook')"><span class="nav-icon">📒</span>Cashbook</button>
+      <button class="nav-btn" data-page="balancesheet" onclick="navigate('balancesheet')"><span class="nav-icon">📊</span>Balance Sheet</button>
+      <div class="nav-section">Config</div>
+      <button class="nav-btn" data-page="templates" onclick="navigate('templates')"><span class="nav-icon">☰</span>Templates</button>
+      <button class="nav-btn" data-page="settings" onclick="navigate('settings')"><span class="nav-icon">⚙</span>Settings</button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user" id="username-display"></div>
+      <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center" onclick="logout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="main-wrap">
+    <div class="topbar">
+      <button class="menu-btn" onclick="openSidebar()">☰</button>
+      <div style="flex:1"></div>
+      <a href="/api/export" download="students.csv" class="btn btn-ghost btn-sm">⬇ Export CSV</a>
+    </div>
+    <div class="main">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header"><div><div class="page-title">Dashboard</div><div class="page-sub">Overview of school finances</div></div></div>
+        <div class="stat-grid">
+          <div class="stat-card" style="border-left-color:#2563eb"><div class="stat-label">Students</div><div class="stat-val" id="d-total">0</div></div>
+          <div class="stat-card" style="border-left-color:#16a34a"><div class="stat-label">Fees Collected</div><div class="stat-val" id="d-collected" style="color:#16a34a">₹0</div><div class="stat-sub" id="d-of"></div></div>
+          <div class="stat-card" style="border-left-color:#dc2626"><div class="stat-label">Fees Due</div><div class="stat-val" id="d-due" style="color:#dc2626">₹0</div><div class="stat-sub" id="d-due-sub"></div></div>
+          <div class="stat-card" style="border-left-color:#d97706"><div class="stat-label">Total Expenses</div><div class="stat-val" id="d-exp" style="color:#d97706">₹0</div></div>
+          <div class="stat-card" style="border-left-color:#7c3aed"><div class="stat-label">Net Balance</div><div class="stat-val" id="d-balance">₹0</div></div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--g500);margin-bottom:8px"><span>Fee collection rate</span><span id="d-pct" style="font-weight:600;color:var(--g800)">0%</span></div>
+          <div style="height:8px;background:var(--g100);border-radius:4px;overflow:hidden"><div id="d-bar" style="height:100%;width:0%;background:var(--blue);border-radius:4px;transition:width .5s"></div></div>
+        </div>
+        <div class="card"><div class="card-title">Students with pending fees</div><div class="overflow-x"><table><thead><tr><th>Student</th><th>Class</th><th>Due</th><th>Status</th></tr></thead><tbody id="d-table"></tbody></table></div></div>
+      </div>
+
+      <!-- STUDENTS -->
+      <div class="page" id="page-students">
+        <div class="page-header"><div><div class="page-title">Students</div><div class="page-sub" id="s-count"></div></div><button class="btn btn-primary" onclick="openAddStudent()">+ Add Student</button></div>
+        <div class="card" style="padding:12px 16px"><input class="form-input" placeholder="Search by name, class or phone..." oninput="renderStudents(this.value)"/></div>
+        <div class="card" style="padding:0;overflow:hidden"><div class="overflow-x"><table><thead><tr><th>#</th><th>Name</th><th class="hide-mobile">Father</th><th class="hide-mobile">Phone</th><th>Class</th><th>Total</th><th>Paid</th><th>Due</th><th>Status</th><th></th></tr></thead><tbody id="s-table"></tbody></table></div></div>
+      </div>
+
+      <!-- FEES -->
+      <div class="page" id="page-fees">
+        <div class="page-header"><div><div class="page-title">Fee Records</div><div class="page-sub">Record and track payments</div></div></div>
+        <div class="filter-row">
+          <button class="btn btn-primary btn-sm" onclick="setFeeFilter('all')">All</button>
+          <button class="btn btn-ghost btn-sm" onclick="setFeeFilter('due')">Due</button>
+          <button class="btn btn-ghost btn-sm" onclick="setFeeFilter('partial')">Partial</button>
+          <button class="btn btn-ghost btn-sm" onclick="setFeeFilter('paid')">Paid</button>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden"><div class="overflow-x"><table><thead><tr><th>Student</th><th>Class</th><th>Total</th><th>Paid</th><th>Due</th><th class="hide-mobile">Last Paid</th><th>Status</th><th>Action</th></tr></thead><tbody id="f-table"></tbody></table></div></div>
+      </div>
+
+      <!-- WHATSAPP -->
+      <div class="page" id="page-whatsapp">
+        <div class="page-header"><div><div class="page-title">WhatsApp Messages</div><div class="page-sub">Send automated messages</div></div></div>
+        <div id="wa-no-config" class="info-box hidden">⚠ WhatsApp API not configured. Go to Settings first.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <div class="card"><div class="card-title">Message type</div><div id="wa-tpl-picker"></div></div>
+            <div class="card">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="card-title" style="margin-bottom:0">Recipients</div>
+                <div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="waSelectAll()">All</button><button class="btn btn-ghost btn-sm" onclick="waSelectDue()">Due</button><button class="btn btn-ghost btn-sm" onclick="waSelectNone()">Clear</button></div>
+              </div>
+              <div id="wa-recipients" style="max-height:240px;overflow-y:auto"></div>
+            </div>
+            <button class="btn btn-success" style="width:100%;justify-content:center;padding:11px" onclick="waSendAll()">Send Messages</button>
+          </div>
+          <div>
+            <div class="card"><div class="card-title">Preview</div><div class="wa-preview" id="wa-preview">Select a template to preview</div></div>
+            <div class="card hidden" id="wa-log-card"><div class="card-title">Send log</div><div id="wa-log"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASHBOOK -->
+      <div class="page" id="page-cashbook">
+        <div class="page-header">
+          <div><div class="page-title">Cashbook</div><div class="page-sub">Record all income and expenses</div></div>
+          <button class="btn btn-primary" onclick="openAddExpense()">+ Add Entry</button>
+        </div>
+        <div class="card" style="padding:14px 16px;margin-bottom:14px">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+            <div style="display:flex;gap:8px;align-items:center">
+              <label class="form-label" style="margin:0">Month</label>
+              <select class="form-input" id="cb-month" style="width:auto" onchange="loadExpenses()">
+                <option value="">All</option>
+                <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+                <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+                <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+                <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+              </select>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <label class="form-label" style="margin:0">Year</label>
+              <select class="form-input" id="cb-year" style="width:auto" onchange="loadExpenses()"></select>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:16px;font-size:13px">
+              <span>Income: <strong style="color:var(--green)" id="cb-total-income">₹0</strong></span>
+              <span>Expense: <strong style="color:var(--red)" id="cb-total-expense">₹0</strong></span>
+              <span>Balance: <strong id="cb-total-balance">₹0</strong></span>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden"><div class="overflow-x"><table><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Type</th><th style="text-align:right">Amount</th><th></th></tr></thead><tbody id="cb-table"></tbody></table></div></div>
+      </div>
+
+      <!-- BALANCE SHEET -->
+      <div class="page" id="page-balancesheet">
+        <div class="page-header">
+          <div><div class="page-title">Balance Sheet</div><div class="page-sub">Monthly summary of income vs expenses</div></div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select class="form-input" id="bs-year" style="width:auto" onchange="loadBalanceSheet()"></select>
+            <button class="btn btn-ghost" onclick="loadBalanceSheet()">Refresh</button>
+          </div>
+        </div>
+        <div class="stat-grid" style="margin-bottom:20px">
+          <div class="stat-card" style="border-left-color:#16a34a"><div class="stat-label">Total Income</div><div class="stat-val" id="bs-total-income" style="color:#16a34a">₹0</div></div>
+          <div class="stat-card" style="border-left-color:#dc2626"><div class="stat-label">Total Expenses</div><div class="stat-val" id="bs-total-expense" style="color:#dc2626">₹0</div></div>
+          <div class="stat-card" style="border-left-color:#7c3aed"><div class="stat-label">Net Balance</div><div class="stat-val" id="bs-net">₹0</div></div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <table>
+            <thead><tr><th>Month</th><th style="text-align:right">Fee Income</th><th style="text-align:right">Other Income</th><th style="text-align:right">Total Income</th><th style="text-align:right">Expenses</th><th style="text-align:right">Balance</th></tr></thead>
+            <tbody id="bs-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TEMPLATES -->
+      <div class="page" id="page-templates">
+        <div class="page-header"><div><div class="page-title">Message Templates</div><div class="page-sub">Use {name} {class} {total} {paid} {due} {school} {father} {mother}</div></div><button class="btn btn-primary" onclick="saveTemplates()">Save All</button></div>
+        <div class="card" style="padding:12px 16px;margin-bottom:14px">
+          <div style="font-size:12px;font-weight:600;color:var(--g500);margin-bottom:8px">Click a variable to copy it</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px" id="var-chips"></div>
+        </div>
+        <div id="tpl-cards"></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="page-header"><div><div class="page-title">Settings</div><div class="page-sub">School info and WhatsApp API</div></div><button class="btn btn-primary" onclick="saveSettings()">Save Settings</button></div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-title">School details</div>
+          <div class="form-grid">
+            <div class="form-group span2"><label class="form-label">School Name</label><input class="form-input" id="cfg-school"/></div>
+            <div class="form-group"><label class="form-label">Country Code</label><input class="form-input" id="cfg-cc" value="+91"/></div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-title">WhatsApp Business API</div>
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Phone Number ID</label><input class="form-input" id="cfg-phone-id"/></div>
+            <div class="form-group"><label class="form-label">Business Account ID</label><input class="form-input" id="cfg-waba-id"/></div>
+            <div class="form-group span2"><label class="form-label">Access Token</label><input class="form-input" type="password" id="cfg-token"/></div>
+          </div>
+          <div style="background:var(--red-l);color:var(--red);padding:10px 12px;border-radius:8px;font-size:12px">Keep your Access Token secret — never share it.</div>
+        </div>
+        <div class="card"><div class="card-title">Setup guide</div><div id="setup-steps"></div></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay hidden" id="modal-student">
+  <div class="modal">
+    <div class="modal-title" id="modal-student-title">Add Student</div>
+    <div class="form-grid">
+      <div class="form-group span2"><label class="form-label">Student Name *</label><input class="form-input" id="f-name"/></div>
+      <div class="form-group"><label class="form-label">Class *</label>
+        <select class="form-input" id="f-class">
+          <option value="">Select class</option>
+          <option>Playgroup</option><option>Nursery</option><option>LKG</option><option>UKG</option>
+          <option>Class 1</option><option>Class 2</option><option>Class 3</option><option>Class 4</option>
+          <option>Class 5</option><option>Class 6</option><option>Class 7</option><option>Class 8</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Section</label><input class="form-input" id="f-section" placeholder="A, B, C..."/></div>
+      <div class="form-group"><label class="form-label">Father's Name</label><input class="form-input" id="f-father"/></div>
+      <div class="form-group"><label class="form-label">Mother's Name</label><input class="form-input" id="f-mother"/></div>
+      <div class="form-group"><label class="form-label">Phone *</label><input class="form-input" id="f-phone" type="tel"/></div>
+      <div class="form-group"><label class="form-label">Total Annual Fee (₹) *</label><input class="form-input" id="f-total" type="number"/></div>
+      <div class="form-group span2"><label class="form-label">Fees Paid So Far (₹)</label><input class="form-input" id="f-paid" type="number" value="0"/></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-student')">Cancel</button><button class="btn btn-primary" onclick="saveStudent()">Save Student</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modal-pay">
+  <div class="modal">
+    <div class="modal-title">Record Payment</div>
+    <div id="pay-info" style="background:var(--g50);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px"></div>
+    <div class="form-group"><label class="form-label">Payment Amount (₹) *</label><input class="form-input" id="pay-amount" type="number"/></div>
+    <div class="form-group"><label class="form-label">Payment Date</label><input class="form-input" id="pay-date" type="date"/></div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" id="pay-wa"/>Send WhatsApp confirmation</label>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-pay')">Cancel</button><button class="btn btn-success" onclick="confirmPayment()">Record Payment</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modal-expense">
+  <div class="modal">
+    <div class="modal-title" id="modal-expense-title">Add Entry</div>
+    <div class="exp-type-toggle">
+      <div class="type-btn expense active" id="type-btn-expense" onclick="setExpenseType('expense')">Expense (Money Out)</div>
+      <div class="type-btn income" id="type-btn-income" onclick="setExpenseType('income')">Income (Money In)</div>
+    </div>
+    <input type="hidden" id="exp-type" value="expense"/>
+    <input type="hidden" id="exp-edit-id" value=""/>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Date *</label><input class="form-input" id="exp-date" type="date"/></div>
+      <div class="form-group"><label class="form-label">Category *</label>
+        <input class="form-input" id="exp-category" list="cat-list" placeholder="e.g. Salary, Rent, Donation"/>
+        <datalist id="cat-list">
+          <option>Staff Salary</option><option>Rent</option><option>Electricity</option><option>Water</option>
+          <option>Maintenance</option><option>Stationery</option><option>Transport</option><option>Food</option>
+          <option>Sports</option><option>Events</option><option>Donation</option><option>Government Grant</option><option>Other</option>
+        </datalist>
+      </div>
+      <div class="form-group span2"><label class="form-label">Description</label><input class="form-input" id="exp-desc" placeholder="Optional details"/></div>
+      <div class="form-group"><label class="form-label">Amount (₹) *</label><input class="form-input" id="exp-amount" type="number" placeholder="0"/></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-expense')">Cancel</button><button class="btn btn-primary" onclick="saveExpense()">Save Entry</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let token=localStorage.getItem('sfm_token');
+let currentUser=null,students=[],settings={},stats={},expenses=[];
+let editStudentId=null,payStudentId=null,feeFilter='all',waTpl='due',waSelected={};
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const TPL_LABELS={due:'Fee due reminder',confirm:'Payment confirmation',statement:'Monthly statement',custom:'Custom message'};
+const TPL_KEYS={due:'tpl_due',confirm:'tpl_confirm',statement:'tpl_statement',custom:'tpl_custom'};
+const TPL_BADGE={due:'badge-red',confirm:'badge-green',statement:'badge-blue',custom:'badge-amber'};
+
+function fmt(n){return '₹'+parseFloat(n||0).toLocaleString('en-IN')}
+function due(s){return Math.max(0,parseFloat(s.total_fee||0)-parseFloat(s.paid_fee||0))}
+function statusBadge(s){const d=due(s);if(d<=0)return'<span class="badge badge-green">Paid</span>';if(parseFloat(s.paid_fee)>0)return'<span class="badge badge-amber">Partial</span>';return'<span class="badge badge-red">Due</span>';}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+function openModal(id){document.getElementById(id).classList.remove('hidden')}
+function closeModal(id){document.getElementById(id).classList.add('hidden')}
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.remove('hidden')}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.add('hidden')}
+
+async function apiFetch(path,opts={}){
+  const res=await fetch('/api'+path,{...opts,headers:{'Content-Type':'application/json','Authorization':token?`Bearer ${token}`:''}});
+  if(res.status===401){logout();return null}
+  return res.json();
+}
+
+function switchAuthTab(mode){
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&mode==='login')||(i===1&&mode==='register')));
+  document.getElementById('register-fields').classList.toggle('hidden',mode==='login');
+  document.getElementById('auth-btn').textContent=mode==='login'?'Sign In':'Create Account';
+  document.getElementById('auth-btn').dataset.mode=mode;
+}
+async function doAuth(){
+  const mode=document.getElementById('auth-btn').dataset.mode||'login';
+  const username=document.getElementById('auth-user').value.trim();
+  const password=document.getElementById('auth-pass').value;
+  const school_name=document.getElementById('reg-school')?.value;
+  if(!username||!password){showAuthError('Fill in username and password');return}
+  document.getElementById('auth-btn').textContent='Please wait...';
+  const data=await apiFetch('/'+mode,{method:'POST',body:JSON.stringify({username,password,school_name})});
+  if(!data){document.getElementById('auth-btn').textContent=mode==='login'?'Sign In':'Create Account';return}
+  if(data.error){showAuthError(data.error);document.getElementById('auth-btn').textContent=mode==='login'?'Sign In':'Create Account';return}
+  token=data.token;currentUser=data.user;localStorage.setItem('sfm_token',token);initApp();
+}
+function showAuthError(msg){const e=document.getElementById('auth-error');e.textContent=msg;e.classList.remove('hidden')}
+function logout(){localStorage.removeItem('sfm_token');token=null;currentUser=null;document.getElementById('auth-screen').classList.remove('hidden');document.getElementById('app-screen').classList.add('hidden')}
+
+async function initApp(){
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('app-screen').classList.remove('hidden');
+  initYearSelectors();
+  await Promise.all([loadStudents(),loadStats(),loadSettings()]);
+  renderDashboard();renderWATemplatePicker();renderTemplateEditor();renderSetupSteps();
+}
+
+function initYearSelectors(){
+  const y=new Date().getFullYear();
+  ['cb-year','bs-year'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;el.innerHTML='';
+    for(let i=y+1;i>=y-3;i--){const o=document.createElement('option');o.value=i;o.textContent=i;if(i===y)o.selected=true;el.appendChild(o);}
+  });
+  const m=new Date().getMonth()+1;
+  const cbm=document.getElementById('cb-month');if(cbm)cbm.value=m;
+}
+
+async function loadStudents(){const d=await apiFetch('/students');if(d)students=d;document.getElementById('s-count').textContent=students.length+' students enrolled'}
+async function loadStats(){const d=await apiFetch('/stats');if(d){stats=d;}}
+async function loadSettings(){
+  const d=await apiFetch('/settings');if(d)settings=d;
+  document.getElementById('school-name-display').textContent=settings.school_name||'My School';
+  if(currentUser)document.getElementById('username-display').textContent=currentUser.username;
+  if(d){
+    document.getElementById('cfg-school').value=d.school_name||'';
+    document.getElementById('cfg-cc').value=d.wa_cc||'+91';
+    document.getElementById('cfg-phone-id').value=d.wa_phone_id||'';
+    document.getElementById('cfg-waba-id').value=d.wa_waba_id||'';
+    document.getElementById('cfg-token').value=d.wa_token||'';
+  }
+}
+
+async function loadExpenses(){
+  const month=document.getElementById('cb-month')?.value;
+  const year=document.getElementById('cb-year')?.value;
+  let url='/expenses';
+  if(month&&year)url+=`?month=${month}&year=${year}`;
+  const d=await apiFetch(url);if(d)expenses=d;
+  renderCashbook();
+}
+
+function navigate(page){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+page));
+  closeSidebar();
+  if(page==='dashboard')renderDashboard();
+  if(page==='students')renderStudents();
+  if(page==='fees')renderFees();
+  if(page==='whatsapp')renderWA();
+  if(page==='cashbook'){loadExpenses();}
+  if(page==='balancesheet')loadBalanceSheet();
+}
+
+function renderDashboard(){
+  document.getElementById('d-total').textContent=stats.total_students||0;
+  document.getElementById('d-collected').textContent=fmt(stats.paid_fee);
+  document.getElementById('d-of').textContent='of '+fmt(stats.total_fee);
+  document.getElementById('d-due').textContent=fmt(stats.due_fee);
+  document.getElementById('d-due-sub').textContent=(students.filter(s=>due(s)>0).length)+' students pending';
+  document.getElementById('d-exp').textContent=fmt(stats.total_expense);
+  const netBal=(stats.paid_fee||0)-(stats.total_expense||0);
+  const balEl=document.getElementById('d-balance');
+  balEl.textContent=fmt(netBal);
+  balEl.style.color=netBal>=0?'var(--green)':'var(--red)';
+  const pct=stats.total_fee>0?Math.round(stats.paid_fee/stats.total_fee*100):0;
+  document.getElementById('d-pct').textContent=pct+'%';
+  document.getElementById('d-bar').style.width=pct+'%';
+  const pending=students.filter(s=>due(s)>0);
+  document.getElementById('d-table').innerHTML=pending.length?pending.map(s=>`<tr><td><div style="font-weight:500">${s.name}</div><div style="font-size:11px;color:var(--g400)">${s.father_name||''}</div></td><td>${s.class||''}</td><td style="color:var(--red);font-weight:600">${fmt(due(s))}</td><td>${statusBadge(s)}</td></tr>`).join(''):'<tr><td colspan="4" style="text-align:center;padding:32px;color:var(--g400)">🎉 All fees cleared!</td></tr>';
+}
+
+function renderStudents(search=''){
+  const filtered=students.filter(s=>!search||s.name.toLowerCase().includes(search.toLowerCase())||(s.class||'').toLowerCase().includes(search.toLowerCase())||(s.phone||'').includes(search));
+  document.getElementById('s-table').innerHTML=filtered.length?filtered.map((s,i)=>`<tr>
+    <td style="color:var(--g400)">${i+1}</td>
+    <td><div style="font-weight:500">${s.name}</div><div style="font-size:11px;color:var(--g400)">${s.section?s.class+' – '+s.section:s.class||''}</div></td>
+    <td class="hide-mobile">${s.father_name||''}</td><td class="hide-mobile" style="font-size:12px">${s.phone||''}</td>
+    <td>${s.class||''}</td><td style="text-align:right">${fmt(s.total_fee)}</td>
+    <td style="text-align:right;color:var(--green);font-weight:500">${fmt(s.paid_fee)}</td>
+    <td style="text-align:right;color:${due(s)>0?'var(--red)':'var(--g400)'};font-weight:${due(s)>0?600:400}">${fmt(due(s))}</td>
+    <td>${statusBadge(s)}</td>
+    <td><div style="display:flex;gap:4px"><button class="btn btn-ghost btn-sm" onclick="openEditStudent(${s.id})">Edit</button><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="deleteStudent(${s.id})">✕</button></div></td>
+  </tr>`).join(''):'<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--g400)">No students found</td></tr>';
+}
+function openAddStudent(){editStudentId=null;document.getElementById('modal-student-title').textContent='Add Student';['f-name','f-father','f-mother','f-phone','f-section','f-total'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-class').value='';document.getElementById('f-paid').value='0';openModal('modal-student')}
+function openEditStudent(id){editStudentId=id;const s=students.find(x=>x.id===id);document.getElementById('modal-student-title').textContent='Edit Student';document.getElementById('f-name').value=s.name||'';document.getElementById('f-father').value=s.father_name||'';document.getElementById('f-mother').value=s.mother_name||'';document.getElementById('f-phone').value=s.phone||'';document.getElementById('f-class').value=s.class||'';document.getElementById('f-section').value=s.section||'';document.getElementById('f-total').value=s.total_fee||'';document.getElementById('f-paid').value=s.paid_fee||'0';openModal('modal-student')}
+async function saveStudent(){
+  const body={name:document.getElementById('f-name').value.trim(),father_name:document.getElementById('f-father').value,mother_name:document.getElementById('f-mother').value,phone:document.getElementById('f-phone').value,class:document.getElementById('f-class').value,section:document.getElementById('f-section').value,total_fee:document.getElementById('f-total').value,paid_fee:document.getElementById('f-paid').value};
+  if(!body.name||!body.class||!body.phone||!body.total_fee){showToast('Fill all required fields');return}
+  await apiFetch(editStudentId?`/students/${editStudentId}`:'/students',{method:editStudentId?'PUT':'POST',body:JSON.stringify(body)});
+  closeModal('modal-student');await loadStudents();await loadStats();renderStudents();renderDashboard();showToast(editStudentId?'Student updated!':'Student added!');
+}
+async function deleteStudent(id){if(!confirm('Remove this student?'))return;await apiFetch(`/students/${id}`,{method:'DELETE'});await loadStudents();await loadStats();renderStudents();renderDashboard();showToast('Student removed')}
+
+function setFeeFilter(f){feeFilter=f;document.querySelectorAll('.filter-row .btn').forEach(b=>b.className='btn btn-sm '+(b.textContent.toLowerCase()===f?'btn-primary':'btn-ghost'));renderFees()}
+function renderFees(){
+  const filtered=students.filter(s=>{const d=due(s);if(feeFilter==='paid')return d<=0;if(feeFilter==='due')return d>0&&parseFloat(s.paid_fee)===0;if(feeFilter==='partial')return d>0&&parseFloat(s.paid_fee)>0;return true});
+  document.getElementById('f-table').innerHTML=filtered.length?filtered.map(s=>`<tr>
+    <td><div style="font-weight:500">${s.name}</div><div style="font-size:11px;color:var(--g400)">${s.phone||''}</div></td>
+    <td>${s.class||''}</td><td style="text-align:right">${fmt(s.total_fee)}</td>
+    <td style="text-align:right;color:var(--green);font-weight:500">${fmt(s.paid_fee)}</td>
+    <td style="text-align:right;color:${due(s)>0?'var(--red)':'var(--g400)'};font-weight:${due(s)>0?600:400}">${fmt(due(s))}</td>
+    <td class="hide-mobile" style="color:var(--g400);font-size:12px">${s.last_paid||'—'}</td>
+    <td>${statusBadge(s)}</td>
+    <td><button class="btn btn-primary btn-sm" onclick="openPay(${s.id})">Record</button></td>
+  </tr>`).join(''):'<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--g400)">No records</td></tr>';
+}
+function openPay(id){payStudentId=id;const s=students.find(x=>x.id===id);document.getElementById('pay-info').innerHTML=`<div style="font-weight:500">${s.name}</div><div style="color:var(--g500);margin-top:2px">${s.class||''} · Due: ${fmt(due(s))}</div>`;document.getElementById('pay-amount').value='';document.getElementById('pay-date').value=new Date().toISOString().split('T')[0];document.getElementById('pay-wa').checked=false;openModal('modal-pay')}
+async function confirmPayment(){
+  const amount=document.getElementById('pay-amount').value;if(!amount||parseFloat(amount)<=0){showToast('Enter a valid amount');return}
+  await apiFetch(`/students/${payStudentId}/payment`,{method:'POST',body:JSON.stringify({amount,date:document.getElementById('pay-date').value})});
+  if(document.getElementById('pay-wa').checked){try{await apiFetch('/whatsapp/send',{method:'POST',body:JSON.stringify({student_id:payStudentId,template_type:'confirm'})})}catch(e){}}
+  closeModal('modal-pay');await loadStudents();await loadStats();renderFees();renderDashboard();showToast('Payment recorded!');
+}
+
+// CASHBOOK
+function setExpenseType(t){document.getElementById('exp-type').value=t;document.getElementById('type-btn-expense').className='type-btn expense'+(t==='expense'?' active':'');document.getElementById('type-btn-income').className='type-btn income'+(t==='income'?' active':'');}
+function openAddExpense(){
+  document.getElementById('modal-expense-title').textContent='Add Entry';
+  document.getElementById('exp-edit-id').value='';
+  document.getElementById('exp-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('exp-category').value='';document.getElementById('exp-desc').value='';document.getElementById('exp-amount').value='';
+  setExpenseType('expense');openModal('modal-expense');
+}
+function openEditExpense(id){
+  const e=expenses.find(x=>x.id===id);if(!e)return;
+  document.getElementById('modal-expense-title').textContent='Edit Entry';
+  document.getElementById('exp-edit-id').value=id;
+  document.getElementById('exp-date').value=e.date?.split('T')[0]||'';
+  document.getElementById('exp-category').value=e.category||'';
+  document.getElementById('exp-desc').value=e.description||'';
+  document.getElementById('exp-amount').value=e.amount||'';
+  setExpenseType(e.type||'expense');openModal('modal-expense');
+}
+async function saveExpense(){
+  const body={date:document.getElementById('exp-date').value,category:document.getElementById('exp-category').value.trim(),description:document.getElementById('exp-desc').value,amount:document.getElementById('exp-amount').value,type:document.getElementById('exp-type').value};
+  if(!body.category||!body.amount){showToast('Fill category and amount');return}
+  const editId=document.getElementById('exp-edit-id').value;
+  await apiFetch(editId?`/expenses/${editId}`:'/expenses',{method:editId?'PUT':'POST',body:JSON.stringify(body)});
+  closeModal('modal-expense');await loadExpenses();await loadStats();renderDashboard();showToast(editId?'Entry updated!':'Entry added!');
+}
+async function deleteExpense(id){if(!confirm('Delete this entry?'))return;await apiFetch(`/expenses/${id}`,{method:'DELETE'});await loadExpenses();await loadStats();renderDashboard();showToast('Entry deleted')}
+function renderCashbook(){
+  let totalIncome=0,totalExpense=0;
+  expenses.forEach(e=>{if(e.type==='income')totalIncome+=parseFloat(e.amount);else totalExpense+=parseFloat(e.amount);});
+  const bal=totalIncome-totalExpense;
+  document.getElementById('cb-total-income').textContent=fmt(totalIncome);
+  document.getElementById('cb-total-expense').textContent=fmt(totalExpense);
+  const balEl=document.getElementById('cb-total-balance');balEl.textContent=fmt(bal);balEl.style.color=bal>=0?'var(--green)':'var(--red)';
+  document.getElementById('cb-table').innerHTML=expenses.length?expenses.map(e=>`<tr>
+    <td style="font-size:12px;color:var(--g500)">${e.date?.split('T')[0]||''}</td>
+    <td style="font-weight:500">${e.category}</td>
+    <td style="color:var(--g500)">${e.description||'—'}</td>
+    <td><span class="badge ${e.type==='income'?'badge-green':'badge-red'}">${e.type==='income'?'Income':'Expense'}</span></td>
+    <td style="text-align:right;font-weight:600;color:${e.type==='income'?'var(--green)':'var(--red)'}">${e.type==='income'?'+':'-'}${fmt(e.amount)}</td>
+    <td><div style="display:flex;gap:4px"><button class="btn btn-ghost btn-sm" onclick="openEditExpense(${e.id})">Edit</button><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="deleteExpense(${e.id})">✕</button></div></td>
+  </tr>`).join(''):'<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--g400)">No entries found. Click + Add Entry to start.</td></tr>';
+}
+
+// BALANCE SHEET
+async function loadBalanceSheet(){
+  const year=document.getElementById('bs-year')?.value||new Date().getFullYear();
+  const d=await apiFetch(`/balancesheet?year=${year}`);if(!d)return;
+  let totalIncome=0,totalExpense=0;
+  d.months.forEach(m=>{totalIncome+=m.total_income;totalExpense+=m.expense;});
+  const net=totalIncome-totalExpense;
+  document.getElementById('bs-total-income').textContent=fmt(totalIncome);
+  document.getElementById('bs-total-expense').textContent=fmt(totalExpense);
+  const netEl=document.getElementById('bs-net');netEl.textContent=fmt(net);netEl.style.color=net>=0?'var(--purple)':'var(--red)';
+  document.getElementById('bs-table').innerHTML=d.months.map((m,i)=>{
+    const hasData=m.total_income>0||m.expense>0;
+    return`<tr style="${!hasData?'opacity:.4':''}">
+      <td style="font-weight:500">${MONTHS[m.month-1]}</td>
+      <td style="text-align:right;color:var(--green)">${m.fee_income>0?fmt(m.fee_income):'—'}</td>
+      <td style="text-align:right;color:var(--blue)">${m.other_income>0?fmt(m.other_income):'—'}</td>
+      <td style="text-align:right;font-weight:600;color:var(--green)">${m.total_income>0?fmt(m.total_income):'—'}</td>
+      <td style="text-align:right;color:var(--red)">${m.expense>0?fmt(m.expense):'—'}</td>
+      <td style="text-align:right;font-weight:700;color:${m.balance>=0?'var(--green)':'var(--red)'}">${hasData?fmt(m.balance):'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// WHATSAPP
+function renderWATemplatePicker(){
+  document.getElementById('wa-tpl-picker').innerHTML=Object.entries(TPL_LABELS).map(([k,l])=>`
+    <div onclick="selectWATpl('${k}')" style="border:1px solid ${waTpl===k?'var(--blue)':'var(--g200)'};border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;background:${waTpl===k?'var(--blue-l)':'#fff'}">
+      <span class="badge ${TPL_BADGE[k]}" style="margin-bottom:4px;display:inline-block">${l}</span>
+      <div style="font-size:12px;color:var(--g500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${(settings[TPL_KEYS[k]]||'').split('\n')[0]||'...'}</div>
+    </div>`).join('');
+}
+function selectWATpl(k){waTpl=k;renderWATemplatePicker();updateWAPreview()}
+function renderWA(){
+  document.getElementById('wa-no-config').classList.toggle('hidden',!!(settings.wa_phone_id&&settings.wa_token));
+  renderWATemplatePicker();
+  document.getElementById('wa-recipients').innerHTML=students.map(s=>`
+    <label style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--g50);cursor:pointer">
+      <input type="checkbox" id="wachk-${s.id}" ${waSelected[s.id]?'checked':''} onchange="waSelected[${s.id}]=this.checked;updateWAPreview()"/>
+      <div style="flex:1"><div style="font-size:13px;font-weight:500">${s.name}</div><div style="font-size:11px;color:var(--g400)">${s.class||''} · ${fmt(due(s))} due</div></div>
+      ${statusBadge(s)}
+    </label>`).join('');
+  updateWAPreview();
+}
+function waSelectAll(){students.forEach(s=>{waSelected[s.id]=true;const c=document.getElementById('wachk-'+s.id);if(c)c.checked=true});updateWAPreview()}
+function waSelectDue(){students.forEach(s=>{waSelected[s.id]=due(s)>0;const c=document.getElementById('wachk-'+s.id);if(c)c.checked=due(s)>0});updateWAPreview()}
+function waSelectNone(){students.forEach(s=>{waSelected[s.id]=false;const c=document.getElementById('wachk-'+s.id);if(c)c.checked=false})}
+function fillTpl(b,s){return(b||'').replace(/{name}/g,s.name).replace(/{class}/g,s.class||'').replace(/{father}/g,s.father_name||'').replace(/{mother}/g,s.mother_name||'').replace(/{total}/g,parseFloat(s.total_fee).toLocaleString('en-IN')).replace(/{paid}/g,parseFloat(s.paid_fee).toLocaleString('en-IN')).replace(/{due}/g,due(s).toLocaleString('en-IN')).replace(/{school}/g,settings.school_name||'School')}
+function updateWAPreview(){const s=students.find(x=>waSelected[x.id])||students[0];document.getElementById('wa-preview').textContent=s?fillTpl(settings[TPL_KEYS[waTpl]],s):'Select a recipient to preview'}
+async function waSendAll(){
+  const targets=students.filter(s=>waSelected[s.id]);
+  if(!targets.length){showToast('Select at least one recipient');return}
+  if(!settings.wa_phone_id||!settings.wa_token){showToast('Configure WhatsApp API in Settings first');return}
+  const logCard=document.getElementById('wa-log-card');const log=document.getElementById('wa-log');
+  logCard.classList.remove('hidden');log.innerHTML='';
+  for(const s of targets){
+    const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--g50);font-size:13px';
+    row.innerHTML=`<span style="font-weight:500">${s.name}</span><span class="badge badge-amber">Sending...</span>`;log.appendChild(row);
+    try{await apiFetch('/whatsapp/send',{method:'POST',body:JSON.stringify({student_id:s.id,template_type:waTpl})});row.querySelector('.badge').className='badge badge-green';row.querySelector('.badge').textContent='Sent';}
+    catch(e){row.querySelector('.badge').className='badge badge-red';row.querySelector('.badge').textContent='Failed';}
+  }
+  await loadStats();renderDashboard();showToast('Done!');
+}
+
+// TEMPLATES
+function renderTemplateEditor(){
+  const vars=['{name}','{class}','{father}','{mother}','{total}','{paid}','{due}','{school}'];
+  document.getElementById('var-chips').innerHTML=vars.map(v=>`<span onclick="navigator.clipboard.writeText('${v}');showToast('Copied ${v}')" style="background:var(--g100);border:1px solid var(--g200);border-radius:6px;padding:3px 10px;font-size:12px;font-family:monospace;cursor:pointer;color:var(--blue)">${v}</span>`).join('');
+  const colors={due:'#fef2f2',confirm:'#f0fdf4',statement:'#eff6ff',custom:'#fffbeb'};
+  const borders={due:'#fca5a5',confirm:'#86efac',statement:'#93c5fd',custom:'#fcd34d'};
+  document.getElementById('tpl-cards').innerHTML=Object.entries(TPL_LABELS).map(([k,l])=>`<div class="card"><div class="card-title">${l}</div><textarea id="tpl-${k}" rows="7" style="width:100%;border:1px solid ${borders[k]};border-radius:8px;padding:10px 12px;font-family:monospace;font-size:12px;line-height:1.7;background:${colors[k]};color:var(--g800);resize:vertical">${settings[TPL_KEYS[k]]||''}</textarea></div>`).join('');
+}
+async function saveTemplates(){
+  const body={...settings};Object.keys(TPL_KEYS).forEach(k=>{body[TPL_KEYS[k]]=document.getElementById('tpl-'+k).value});
+  await apiFetch('/settings',{method:'PUT',body:JSON.stringify(body)});await loadSettings();showToast('Templates saved!');renderWATemplatePicker();
+}
+
+async function saveSettings(){
+  const body={...settings,school_name:document.getElementById('cfg-school').value,wa_cc:document.getElementById('cfg-cc').value,wa_phone_id:document.getElementById('cfg-phone-id').value,wa_waba_id:document.getElementById('cfg-waba-id').value,wa_token:document.getElementById('cfg-token').value};
+  await apiFetch('/settings',{method:'PUT',body:JSON.stringify(body)});await loadSettings();showToast('Settings saved!');
+}
+function renderSetupSteps(){
+  const steps=[{n:1,t:'Create a Meta Developer account',d:'Go to developers.facebook.com → My Apps → Create App → Business type.'},{n:2,t:'Add WhatsApp to your app',d:'Dashboard → Add Product → WhatsApp → Set Up.'},{n:3,t:'Get Phone Number ID & Token',d:'WhatsApp → API Setup. Copy Phone Number ID and generate Access Token.'},{n:4,t:'Submit message templates',d:'WhatsApp Manager → Account Tools → Message Templates. Submit for approval.'},{n:5,t:'Enter credentials above and save',d:'Paste your credentials in the fields above.'}];
+  document.getElementById('setup-steps').innerHTML=steps.map((s,i)=>`<div style="display:flex;gap:14px;padding:14px 0;border-bottom:${i<4?'1px solid var(--g50)':'none'}"><div style="width:28px;height:28px;min-width:28px;border-radius:50%;background:var(--blue-l);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">${s.n}</div><div><div style="font-size:13px;font-weight:600;color:var(--g800)">${s.t}</div><div style="font-size:12px;color:var(--g500);margin-top:3px;line-height:1.5">${s.d}</div></div></div>`).join('');
+}
+
+if(token){
+  apiFetch('/students').then(d=>{
+    if(d!==null){
+      students=d||[];
+      currentUser={username:localStorage.getItem('sfm_user')||'user'};
+      document.getElementById('username-display').textContent=currentUser.username;
+      document.getElementById('auth-screen').classList.add('hidden');
+      document.getElementById('app-screen').classList.remove('hidden');
+      initYearSelectors();
+      Promise.all([loadStats(),loadSettings()]).then(()=>{renderDashboard();renderWATemplatePicker();renderTemplateEditor();renderSetupSteps();});
+    }
+  });
+}
+</script>
+</body>
+</html>
